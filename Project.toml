@@ -10,8 +10,15 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
+[weakdeps]
+DisjunctiveProgramming = "0d27d021-0159-4c7d-b4a7-9ccb5d9366cf"
+
+[extensions]
+BilevelJuMPDisjunctiveProgrammingExt = "DisjunctiveProgramming"
+
 [compat]
 Dualization = "0.7"
+DisjunctiveProgramming = "0.8"
 JuMP = "1.7.0"
 MathOptInterface = "1.2"
 Reexport = "1"
