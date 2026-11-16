@@ -4,7 +4,7 @@
 # in the LICENSE.md file or at https://opensource.org/licenses/MIT.
 
 """
-    DisjunctionMode(gdp_method = DisjunctiveProgramming.BigM())
+    DisjunctionMode(gdp_method)
 
 Used to solve a bilevel problem with the MPEC reformulation, writing each
 complementarity condition as a two-term disjunction
@@ -19,9 +19,8 @@ model and from the bound hints (e.g. `set_dual_upper_bound_hint`).
 Requires `using DisjunctiveProgramming`.
 """
 mutable struct DisjunctionMode{T} <: AbstractBilevelSolverMode{T}
-    # `nothing` selects `DisjunctiveProgramming.BigM()`
     gdp_method::Any
-    function DisjunctionMode(gdp_method = nothing)
+    function DisjunctionMode(gdp_method)
         return new{Float64}(gdp_method)
     end
 end

@@ -21,8 +21,8 @@ end
     reformulates the `DisjunctionSet` constraints with the mode's
     `gdp_method` in a `GDPModel` and copies the result into the inner
     solver; every other call is forwarded. The returned index map points at
-    the inner solver's own indices, so once the wrapper is removed, results
-    are read from the solver as for any other mode.
+    the inner solver's own indices, and `model.solver` stays the inner
+    solver, so results are read from it as for any other mode.
 =#
 
 struct _ReformulatingSolver{S<:MOI.ModelLike} <: MOI.AbstractOptimizer
@@ -114,30 +114,11 @@ function MOI.set(
     return MOI.set(reformulating_solver.inner_solver, attr, index, value)
 end
 
-# Same pipeline as every other mode, with the solver wrapped for the solve
-function BilevelJuMP._optimize!(
-    model::BilevelJuMP.BilevelModel,
-    mode::BilevelJuMP.DisjunctionMode;
-    kwargs...,
+function BilevelJuMP._mode_solver(
+    solver::MOI.ModelLike,
+    mode::BilevelJuMP.DisjunctionMode,
 )
-    BilevelJuMP._check_solver(model)
-    inner_solver = model.solver
-    gdp_method = something(mode.gdp_method, DP.BigM())
-    model.solver = _ReformulatingSolver(inner_solver, gdp_method)
-    try
-        return invoke(
-            BilevelJuMP._optimize!,
-            Tuple{
-                BilevelJuMP.BilevelModel,
-                BilevelJuMP.AbstractBilevelSolverMode,
-            },
-            model,
-            mode;
-            kwargs...,
-        )
-    finally
-        model.solver = inner_solver
-    end
+    return _ReformulatingSolver(solver, mode.gdp_method)
 end
 
 end # module

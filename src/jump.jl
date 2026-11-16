@@ -706,7 +706,7 @@ function _optimize!(
 )
     _check_solver(model)
 
-    solver = model.solver #optimizer#MOI.Bridges.full_bridge_optimizer(optimizer, Float64)
+    solver = _mode_solver(model.solver, mode)
     if true#!MOI.is_empty(solver)
         MOI.empty!(solver)
     end
@@ -834,6 +834,11 @@ function _optimize!(
 
     return nothing
 end
+
+# Optimizer the single-level model is copied into; a mode that has to
+# transform the model on its way to the solver returns a wrapper whose
+# `copy_to` maps back to the indices of `solver` itself
+_mode_solver(solver, ::AbstractBilevelSolverMode) = solver
 
 # Extra info
 
